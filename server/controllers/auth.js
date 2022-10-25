@@ -1,9 +1,16 @@
 import User from "../src/models/User.js";
+import { validationResult } from "express-validator";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const register = async (req, res) => {
   try {
+    const errors = validationResult(req);
+    
+    if (!errors.isEmpty()) {
+      return res.status(400).json(errors.array());
+    }
+
     const { username, password } = req.body;
 
     const isUsed = await User.findOne({ username });
